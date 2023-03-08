@@ -17,11 +17,12 @@
   const passwordConfirmation = useField('passwordConfirmation')
 
 
-  const submit = values => {
+  const submit = (values, { setErrors }) => {
     const authStore = useAuthStore();
     const { username, email, password, passwordConfirmation } = values;
 
     return authStore.register(username, email, password, passwordConfirmation)
+      .catch(error => setErrors({ apiError: error }));
   }
 
 </script>
@@ -29,7 +30,7 @@
 <template>
   <v-container class="py-10 px-6" fluid>
     <v-card width="33vw" class="mx-auto pa-4" color="surface">
-      <h2 class="text-h4 mb-2 font-weight-medium">Login</h2>
+      <h2 class="text-h4 mb-2 font-weight-medium">Register</h2>
       <Form @submit="submit" :validation-schema="schema" v-slot="{ errors, isSubmitting }">
         <div class="form-row">
           <div class="form-group col">
@@ -71,7 +72,7 @@
           Register
         </v-btn>
 
-        <!-- <div v-if="errors.apiError" class="alert alert-danger mt-3 mb-0">{{ errors.apiError }}</div> -->
+        <div v-if="errors.apiError" class="alert alert-danger mt-3 mb-0">{{ errors.apiError }}</div>
       </Form>
     </v-card>
   </v-container>
