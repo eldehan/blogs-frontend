@@ -27,18 +27,16 @@
     img: Yup.string().label("Image URL (Optional)"),
   });
 
-  const submit = values => {
-    try {
-      if (id) {
-        const { title, content, img } = values
-        return blogsStore.editBlog(title, content, img, id)
-      } else {
-        const { title, content, img } = values
-        const authorId = parseJwt(JSON.stringify(authUser)).id
-        return blogsStore.postBlog(title, content, img, authorId)
-      }
-    } catch (error) {
-      console.log(error)
+  const submit = (values, { setErrors }) => {
+    if (id) {
+      const { title, content, img } = values
+      return blogsStore.editBlog(title, content, img, id)
+        .catch(error => setErrors({ apiError: error }));
+    } else {
+      const { title, content, img } = values
+      const authorId = parseJwt(JSON.stringify(authUser)).id
+      return blogsStore.postBlog(title, content, img, authorId)
+        .catch(error => setErrors({ apiError: error }));
     }
   }
 </script>
@@ -76,9 +74,7 @@
 
           <router-link to="/" class="btn btn-link">Cancel</router-link>
         </div>
-
-
-        <!-- <div v-if="errors.apiError" class="alert alert-danger mt-3 mb-0">{{ errors.apiError }}</div> -->
+        <div v-if="errors.apiError" class="alert alert-danger mt-3 mb-0">{{ errors.apiError }}</div>
       </Form>
     </v-card>
   </v-container>

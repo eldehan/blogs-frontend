@@ -4,6 +4,7 @@
 
   const deletePrompt = ref(false)
   const deleted = ref(false)
+  const apiError = ref('')
   // eslint-disable-next-line vue/no-setup-props-destructure
   const { blog, userId } = defineProps(["blog", "userId"])
   const toggleDeletePrompt = () => {
@@ -14,7 +15,8 @@
   const deletePost = () => {
     const postId = blog.id
     deleted.value = true
-    blogsStore.deleteBlog(postId)
+    return blogsStore.deleteBlog(postId)
+      .catch(error => apiError.value = error);
   }
 
   const placeholderImg = 'https://images.unsplash.com/photo-1508615039623-a25605d2b022?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80'
@@ -39,7 +41,7 @@
         Delete
       </v-btn>
     </v-card-actions>
-    <v-banner v-if="deletePrompt" color="warning" icon="$warning" lines="two">
+    <v-banner v-if="deletePrompt && !apiError" color="warning" icon="$warning" lines="two">
       <template v-slot:prepend>
         <v-avatar></v-avatar>
       </template>
@@ -52,6 +54,20 @@
         <v-btn @click="deletePost">Confirm Delete</v-btn>
         <v-btn @click="toggleDeletePrompt">Cancel</v-btn>
       </v-banner-actions>
+    </v-banner>
+    <v-banner v-else-if="deletePrompt && apiError" color="danger" icon="$warning" lines="two">
+      <template v-slot:prepend>
+        <v-avatar></v-avatar>
+      </template>
+
+      <v-banner-text class="my-2 text-body-1 font-weight-medium">
+        {{ apiError }}
+      </v-banner-text>
+
+      <v-banner-actions class="my-n9">
+        <v-btn @click="toggleDeletePrompt">Cancel</v-btn>
+      </v-banner-actions>
+
     </v-banner>
   </v-card>
 </template>
