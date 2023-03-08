@@ -13,11 +13,12 @@
   const password = useField('password')
 
 
-  const submit = values => {
+  const submit = (values, { setErrors }) => {
     const authStore = useAuthStore();
     const { email, password } = values;
 
     return authStore.login(email, password)
+      .catch(error => setErrors({ apiError: error }));
   }
 
 </script>
@@ -49,7 +50,7 @@
           Log In
         </v-btn>
         <router-link to="/register" class="btn btn-link">Don't have an account? Register here.</router-link>
-        <!-- <div v-if="errors.apiError" class="alert alert-danger mt-3 mb-0">{{ errors.apiError }}</div> -->
+        <div v-if="errors.apiError" class="alert alert-danger mt-3 mb-0">{{ errors.apiError }}</div>
       </Form>
     </v-card>
   </v-container>
