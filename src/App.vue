@@ -1,7 +1,17 @@
 <script setup>
-  import { RouterView } from 'vue-router';
-  import { useAuthStore } from '@/stores';
+  import { RouterView } from 'vue-router'
+  import { useAuthStore } from '@/stores'
+  import { storeToRefs } from 'pinia'
+  import { parseJwt } from '@/helpers'
+
   const authStore = useAuthStore();
+  let username = ""
+
+  if (authStore.user) {
+    const { user } = storeToRefs(authStore)
+    username = user._object.user ? parseJwt(JSON.stringify(user)).username : ""
+  }
+
 </script>
 
 <template>
@@ -10,15 +20,14 @@
       <v-spacer></v-spacer>
       <v-tabs centered color="black">
         <v-tab class="no-hover" to="/">Home</v-tab>
-        <v-btn v-if="authStore.user" color="black" variant="plain" rounded="0" class="align-self-center me-4"
-          height="100%">
+        <v-btn v-if="username" color="black" variant="plain" rounded="0" class="align-self-center me-4" height="100%">
           Profile
           <v-icon end>
             mdi-menu-down
           </v-icon>
           <v-menu activator="parent">
             <v-list class="bg-grey-lighten-3">
-              <v-list-item to="/my-posts" class="no-hover">
+              <v-list-item :to="`/user/${username}/posts/`" class="no-hover">
                 My Posts
               </v-list-item>
               <v-list-item @click="authStore.logout()" class="no-hover">
@@ -32,7 +41,7 @@
       <v-spacer></v-spacer>
     </v-app-bar>
     <v-main>
-      <RouterView />
+      <RouterView :key="$route.fullPath" />
     </v-main>
   </v-app>
 </template>

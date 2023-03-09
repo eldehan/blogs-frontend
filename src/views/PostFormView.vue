@@ -4,23 +4,23 @@
   import { useRoute } from 'vue-router'
 
   import { useAuthStore, useBlogsStore } from '@/stores'
-  import { parseJwt } from '@/helpers'
+  import { parseJwt, router } from '@/helpers'
   import { storeToRefs } from 'pinia'
 
   const blogsStore = useBlogsStore()
 
-  let currentBlog = null;
+  let currentBlog = null
   const id = useRoute().params.id
   let header = "Create Post"
 
   if (id) {
     header = "Edit Post";
-    ({ currentBlog } = storeToRefs(blogsStore));
+    ({ currentBlog } = storeToRefs(blogsStore))
     blogsStore.getOneBlog(id)
   }
 
-  const authStore = useAuthStore();
-  const { user: authUser } = storeToRefs(authStore);
+  const authStore = useAuthStore()
+  const { user: authUser } = storeToRefs(authStore)
 
   const schema = Yup.object().shape({
     title: Yup.string().required('A title is required').label("Title"),
@@ -31,13 +31,17 @@
     if (id) {
       const { title, content, img } = values
       return blogsStore.editBlog(title, content, img, id)
-        .catch(error => setErrors({ apiError: error }));
+        .catch(error => setErrors({ apiError: error }))
     } else {
       const { title, content, img } = values
       const authorId = parseJwt(JSON.stringify(authUser)).id
       return blogsStore.postBlog(title, content, img, authorId)
-        .catch(error => setErrors({ apiError: error }));
+        .catch(error => setErrors({ apiError: error }))
     }
+  }
+
+  const goBack = () => {
+    router.go(-1)
   }
 </script>
 
@@ -72,7 +76,7 @@
             Submit
           </v-btn>
 
-          <router-link to="/" class="btn btn-link">Cancel</router-link>
+          <a @click="goBack" class="btn btn-link">Cancel</a>
         </div>
         <div v-if="errors.apiError" class="alert alert-danger mt-3 mb-0">{{ errors.apiError }}</div>
       </Form>

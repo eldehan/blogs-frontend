@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
-import { fetchWrapper, parseJwt } from '@/helpers'
-import { useAuthStore } from './auth.store';
+import { fetchWrapper } from '@/helpers'
+import { useUsersStore } from './users.store'
 
 const baseUrl = `${process.env.VUE_APP_APIURL}/blogs`
 
@@ -9,7 +9,7 @@ export const useBlogsStore = defineStore({
   state: () => ({
     blogs: [],
     currentBlog: {},
-    ownBlogs: [],
+    filteredBlogs: [],
   }),
   actions: {
     async getAll() {
@@ -22,31 +22,35 @@ export const useBlogsStore = defineStore({
         this.blogs = { error }
       }
     },
-    async getOneBlog(id) {
+    async getOneBlog(blogId) {
       this.currentBlog = { loading: true }
 
       try {
-        const fetchedBlog = await fetchWrapper.get(`${baseUrl}/${id}`)
+        const fetchedBlog = await fetchWrapper.get(`${baseUrl}/${blogId}`)
         this.currentBlog = fetchedBlog
       } catch (error) {
         this.currentBlog = { error }
       }
     },
-    async editBlog(title, content, img, id, authorId) {
-      const updatedBlog = await fetchWrapper.put(`${baseUrl}/${id}`, { title, content, img, authorId })
-      this.blogs = this.blogs.filter(blog => blog.id !== id) + updatedBlog
+    async editBlog(title, content, img, blogId, authorId) {
+      const updatedBlog = await fetchWrapper.put(`${baseUrl}/${blogId}`, { title, content, img, authorId })
+      this.blogs = this.blogs.filter(blog => blog.id !== blogId) + updatedBlog
 
       this.$router.push('/')
     },
-    async getOwnBlogs() {
-      this.ownBlogs = { loading: true };
-      const authStore = useAuthStore();
-      const user = authStore.user
-      const userId = parseJwt(JSON.stringify(user)).id
+    async getBlogsByUser(username) {
+      this.filteredBlogs = { loading: true }
+
+      const usersStore = useUsersStore()
+      await usersStore.getUserByUsername(username)
 
       try {
-        const fetchedBlogs = await fetchWrapper.get(baseUrl)
-        this.ownBlogs = fetchedBlogs.filter(blog => blog.author.id === userId)
+        if (this.blogs.length > 0) {
+          this.filteredBlogs = this.blogs.filter(blog => blog.author.id === usersStore.currentUser.id)
+        } else {
+          const fetchedBlogs = await fetchWrapper.get(baseUrl)
+          this.filteredBlogs = fetchedBlogs.filter(blog => blog.author.id === usersStore.currentUser.id)
+        }
       } catch (error) {
         this.blogs = { error }
       }
@@ -61,9 +65,9 @@ export const useBlogsStore = defineStore({
 
       this.$router.push('/');
     },
-    async deleteBlog(id) {
-      await fetchWrapper.delete(`${baseUrl}/${id}`)
-      this.blogs = this.blogs.filter(blog => blog.id !== id)
+    async deleteBlog(blogId) {
+      await fetchWrapper.delete(`${baseUrl}/${blogId}`)
+      this.blogs = this.blogs.filter(blog => blog.id !== blogId)
     }
   }
 });

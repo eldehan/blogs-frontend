@@ -6,7 +6,7 @@
   const deleted = ref(false)
   const apiError = ref('')
   // eslint-disable-next-line vue/no-setup-props-destructure
-  const { blog, userId } = defineProps(["blog", "userId"])
+  const { blog, username } = defineProps(["blog", "username"])
   const toggleDeletePrompt = () => {
     deletePrompt.value = !deletePrompt.value
   }
@@ -34,10 +34,10 @@
       <div>{{ blog.content }}</div>
     </v-card-text>
     <v-card-actions v-if="blog.author">
-      <v-btn :to="`/post-form/${blog.id}`" v-if="blog.author.id === userId" color="tertiary" class="no-hover">
+      <v-btn :to="`/post-form/${blog.id}`" v-if="blog.author.username === username" color="tertiary" class="no-hover">
         Edit
       </v-btn>
-      <v-btn @click="toggleDeletePrompt" v-if="blog.author.id === userId" color="tertiary" class="no-hover">
+      <v-btn @click="toggleDeletePrompt" v-if="blog.author.username === username" color="tertiary" class="no-hover">
         Delete
       </v-btn>
     </v-card-actions>
@@ -50,7 +50,7 @@
         Are you sure you want to delete this post? This action is irreversible.
       </v-banner-text>
 
-      <v-banner-actions class="my-n9">
+      <v-banner-actions class="my-n10">
         <v-btn @click="deletePost">Confirm Delete</v-btn>
         <v-btn @click="toggleDeletePrompt">Cancel</v-btn>
       </v-banner-actions>
