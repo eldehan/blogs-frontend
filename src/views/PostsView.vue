@@ -1,9 +1,12 @@
 <script setup>
   import { storeToRefs } from 'pinia'
+  import { useRoute } from 'vue-router'
+  import { useDisplay } from 'vuetify'
+  import { computed } from 'vue'
+
   import { parseJwt } from '@/helpers'
   import { useBlogsStore, useAuthStore } from '@/stores'
   import BlogPost from '@/components/BlogPost.vue'
-  import { useRoute } from 'vue-router'
 
   const blogsStore = useBlogsStore()
   const authStore = useAuthStore()
@@ -28,18 +31,30 @@
     blogsStore.getAll()
   }
 
+  const { name } = useDisplay()
+
+  const headerSize = computed(() => {
+    switch (name.value) {
+      case 'xs': return "h5"
+      case 'sm': return "h5"
+      default: return "h4"
+    }
+  })
 </script>
 
 <template>
   <v-container class="py-8 px-6" fluid>
-    <h2 class="text-h4 mb-2 font-weight-medium">{{ header }}</h2>
-    <v-row>
-      <v-col class="text-right">
-        <v-btn variant="tonal" color="surface" class="new-post-btn no-hover" prepend-icon="mdi-plus-circle"
-          to="/post-form">
-          New Post
-        </v-btn>
+    <v-row class="mb-n8 mt-n6">
+      <v-col class="text-center" cols="4">
+        <h2 :class="`text-${headerSize} mb-2 font-weight-medium`">{{ header }}</h2>
       </v-col>
+      <v-col cols="2"></v-col>
+      <v-col class="text-right"><v-btn variant="tonal" color="surface" class="new-post-btn no-hover"
+          prepend-icon="mdi-plus-circle" to="/post-form">
+          New Post
+        </v-btn></v-col>
+    </v-row>
+    <v-row>
       <v-container v-if="filteredBlogs">
         <v-col v-for="blog in filteredBlogs" :key="blog.id" cols="12">
           <BlogPost :blog="blog" :username="username" />

@@ -1,6 +1,8 @@
 <script setup>
   import { Form, useField, Field } from 'vee-validate';
   import * as Yup from 'yup';
+  import { useDisplay } from 'vuetify'
+  import { computed } from 'vue'
 
   import { useAuthStore } from '@/stores';
 
@@ -25,11 +27,22 @@
       .catch(error => setErrors({ apiError: error }));
   }
 
+  const { name } = useDisplay()
+
+  const width = computed(() => {
+    switch (name.value) {
+      case 'xs': return "85vw"
+      case 'sm': return "75vw"
+      case 'md': return "60vw"
+      default: return "40vw"
+    }
+  })
+
 </script>
 
 <template>
   <v-container class="py-10 px-6" fluid>
-    <v-card width="33vw" class="mx-auto pa-4" color="surface">
+    <v-card :width=width class="mx-auto pa-4" color="surface">
       <h2 class="text-h4 mb-2 font-weight-medium">Register</h2>
       <Form @submit="submit" :validation-schema="schema" v-slot="{ errors, isSubmitting }">
         <div class="form-row">

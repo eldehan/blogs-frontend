@@ -1,5 +1,7 @@
 <script setup>
-  import { defineProps, ref } from 'vue';
+  import { defineProps, ref, computed } from 'vue';
+  import { useDisplay } from 'vuetify'
+
   import { useBlogsStore } from '@/stores'
 
   const deletePrompt = ref(false)
@@ -20,10 +22,17 @@
   }
 
   const placeholderImg = 'https://images.unsplash.com/photo-1508615039623-a25605d2b022?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80'
+  const { mobile } = useDisplay()
+
+  const width = computed(() => {
+    return mobile.value ? '100%' : '60%'
+  })
+
+  console.log(width)
 </script>
 
 <template>
-  <v-card class="mx-auto" max-width="60vw">
+  <v-card class="mx-auto">
     <v-img class="align-end text-white" height="200" :src="blog.img || placeholderImg" cover>
       <v-card-title>{{ blog.title }}</v-card-title>
     </v-img>

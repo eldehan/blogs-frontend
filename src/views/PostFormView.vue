@@ -1,11 +1,11 @@
 <script setup>
   import { Form, Field } from 'vee-validate'
+  import { storeToRefs } from 'pinia'
   import * as Yup from 'yup'
   import { useRoute } from 'vue-router'
 
   import { useAuthStore, useBlogsStore } from '@/stores'
   import { parseJwt, router } from '@/helpers'
-  import { storeToRefs } from 'pinia'
 
   const blogsStore = useBlogsStore()
 
@@ -47,7 +47,7 @@
 
 <template>
   <v-container class="py-10 px-6" v-if="!(currentBlog?.loading || currentBlog?.error)" fluid>
-    <v-card width="60vw" class="mx-auto pa-4" color="surface">
+    <v-card class="mx-auto pa-4" color="surface">
       <h2 class="text-h4 mb-2 font-weight-medium">{{ header }}</h2>
       <Form @submit="submit" :validation-schema="schema" :initial-values="currentBlog" v-slot="{ errors, isSubmitting }">
         <div class="form-row">

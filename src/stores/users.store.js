@@ -1,5 +1,6 @@
-import { defineStore } from 'pinia';
-import { fetchWrapper } from '@/helpers';
+import { defineStore } from 'pinia'
+
+import { fetchWrapper } from '@/helpers'
 
 const baseUrl = `${process.env.VUE_APP_APIURL}/users`
 
@@ -11,7 +12,7 @@ export const useUsersStore = defineStore({
   }),
   actions: {
     async getUserByUsername(username) {
-      this.currentUser = { loading: true };
+      this.currentUser = { loading: true }
       try {
         const fetchedUser = await fetchWrapper.get(`${baseUrl}/${username}`)
         this.currentUser = fetchedUser

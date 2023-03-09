@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+
 import { fetchWrapper } from '@/helpers'
 import { useUsersStore } from './users.store'
 
