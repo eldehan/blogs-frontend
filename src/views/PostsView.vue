@@ -25,7 +25,7 @@
     blogsStore.getBlogsByUser(username)
   } else {
     const { user: authUser } = storeToRefs(authStore)
-    username = parseJwt(JSON.stringify(authUser)).username;
+    username = authUser._object.user ? parseJwt(JSON.stringify(authUser)).username : "";
 
     ({ blogs } = storeToRefs(blogsStore))
     blogsStore.getAll()
