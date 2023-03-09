@@ -20,7 +20,8 @@
       <v-spacer></v-spacer>
       <v-tabs centered color="black">
         <v-tab class="no-hover" to="/">Home</v-tab>
-        <v-btn v-if="username" color="black" variant="plain" rounded="0" class="align-self-center me-4" height="100%">
+        <v-btn v-if="authStore.user" color="black" variant="plain" rounded="0" class="align-self-center me-4"
+          height="100%">
           Profile
           <v-icon end>
             mdi-menu-down
