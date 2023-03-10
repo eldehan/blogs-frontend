@@ -14,8 +14,8 @@ export const useUsersStore = defineStore({
     async getUserByUsername(username) {
       this.currentUser = { loading: true }
       try {
-        const fetchedUser = await fetchWrapper.get(`${baseUrl}/${username}`)
-        this.currentUser = fetchedUser
+        const response = await fetchWrapper.get(`${baseUrl}/${username}`)
+        this.currentUser = response.data
       } catch (error) {
         this.currentUser = { error }
       }

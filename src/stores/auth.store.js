@@ -17,7 +17,8 @@ export const useAuthStore = defineStore({
       router.push('/login')
     },
     async login(email, password) {
-      const user = await fetchWrapper.post(`${baseUrl}/login`, { email, password })
+      const response = await fetchWrapper.post(`${baseUrl}/login`, { email, password })
+      const user = response.data
 
       // update pinia state
       this.user = user

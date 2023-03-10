@@ -1,7 +1,8 @@
 <script setup>
   import { defineProps, ref } from 'vue'
-
-  import { useBlogsStore } from '@/stores'
+  import { storeToRefs } from 'pinia';
+  import { useAuthStore, useBlogsStore } from '@/stores'
+  import { parseJwt } from '@/helpers'
 
   const deletePrompt = ref(false)
   const deleted = ref(false)
@@ -14,9 +15,13 @@
 
   const blogsStore = useBlogsStore()
   const deletePost = () => {
+    const authStore = useAuthStore()
+    const { user: authUser } = storeToRefs(authStore)
+    const authorId = parseJwt(JSON.stringify(authUser)).id
+
     const postId = blog.id
     deleted.value = true
-    return blogsStore.deleteBlog(postId)
+    return blogsStore.deleteBlog(postId, authorId)
       .catch(error => apiError.value = error)
   }
 

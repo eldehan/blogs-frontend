@@ -17,7 +17,8 @@ export const useBlogsStore = defineStore({
       this.blogs = { loading: true }
 
       try {
-        const fetchedBlogs = await fetchWrapper.get(baseUrl)
+        const response = await fetchWrapper.get(baseUrl)
+        const fetchedBlogs = response.data
         this.blogs = fetchedBlogs.sort((a, b) => a.updated_at < b.updated_at)
       } catch (error) {
         this.blogs = { error }
@@ -27,14 +28,16 @@ export const useBlogsStore = defineStore({
       this.currentBlog = { loading: true }
 
       try {
-        const fetchedBlog = await fetchWrapper.get(`${baseUrl}/${blogId}`)
+        const response = await fetchWrapper.get(`${baseUrl}/${blogId}`)
+        const fetchedBlog = response.data
         this.currentBlog = fetchedBlog
       } catch (error) {
         this.currentBlog = { error }
       }
     },
-    async editBlog(title, content, img, blogId, authorId) {
-      const updatedBlog = await fetchWrapper.put(`${baseUrl}/${blogId}`, { title, content, img, authorId })
+    async editBlog(title, content, img, blogId, author) {
+      const response = await fetchWrapper.put(`${baseUrl}/${blogId}`, { title, content, img, author })
+      const updatedBlog = response.data
       this.blogs = this.blogs.filter(blog => blog.id !== blogId) + updatedBlog
 
       this.$router.push('/')
@@ -49,7 +52,9 @@ export const useBlogsStore = defineStore({
         if (this.blogs.length > 0) {
           this.filteredBlogs = this.blogs.filter(blog => blog.author.id === usersStore.currentUser.id)
         } else {
-          const fetchedBlogs = await fetchWrapper.get(baseUrl)
+          const response = await fetchWrapper.get(baseUrl)
+          const fetchedBlogs = response.data
+
           this.filteredBlogs = fetchedBlogs.filter(blog => blog.author.id === usersStore.currentUser.id)
         }
       } catch (error) {
@@ -58,7 +63,8 @@ export const useBlogsStore = defineStore({
     },
     async postBlog(title, content, img, authorId) {
       try {
-        const postedBlog = await fetchWrapper.post(baseUrl, { title, content, img, authorId })
+        const response = await fetchWrapper.post(baseUrl, { title, content, img, authorId })
+        const postedBlog = response.data
         this.blogs += postedBlog
       } catch (error) {
         this.blogs = { error }
@@ -66,8 +72,8 @@ export const useBlogsStore = defineStore({
 
       this.$router.push('/');
     },
-    async deleteBlog(blogId) {
-      await fetchWrapper.delete(`${baseUrl}/${blogId}`)
+    async deleteBlog(blogId, author) {
+      await fetchWrapper.delete(`${baseUrl}/${blogId}`, { author })
       this.blogs = this.blogs.filter(blog => blog.id !== blogId)
     }
   }

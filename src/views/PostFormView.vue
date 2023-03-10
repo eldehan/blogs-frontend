@@ -21,20 +21,29 @@
 
   const authStore = useAuthStore()
   const { user: authUser } = storeToRefs(authStore)
+  const authorId = parseJwt(JSON.stringify(authUser)).id
 
   const schema = Yup.object().shape({
     title: Yup.string().required('A title is required').label("Title"),
-    img: Yup.string().label("Image URL (Optional)"),
+    img: Yup.lazy((value) =>
+      /^data/.test(value)
+        ? Yup.string()
+          .trim()
+          .matches(
+            /^data:([a-z]+\/[a-z0-9-+.]+(;[a-z-]+=[a-z0-9-]+)?)?(;base64)?,([a-z0-9!$&',()*+;=\-._~:@/?%\s]*)$/i,
+            'Must be a valid data URI',
+          )
+        : Yup.string().trim().url('Must be a valid URL')
+    ).label("Image URL (Optional)"),
   });
 
   const submit = (values, { setErrors }) => {
     if (id) {
       const { title, content, img } = values
-      return blogsStore.editBlog(title, content, img, id)
+      return blogsStore.editBlog(title, content, img, id, authorId)
         .catch(error => setErrors({ apiError: error }))
     } else {
       const { title, content, img } = values
-      const authorId = parseJwt(JSON.stringify(authUser)).id
       return blogsStore.postBlog(title, content, img, authorId)
         .catch(error => setErrors({ apiError: error }))
     }
