@@ -24,15 +24,21 @@
     return blogsStore.deleteBlog(postId, authorId)
       .catch(error => apiError.value = error)
   }
-
-  const placeholderImg = 'https://images.unsplash.com/photo-1508615039623-a25605d2b022?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80'
 </script>
 
 <template>
-  <v-card class="mx-auto">
-    <v-img class="align-end text-white" height="200" :src="blog.img || placeholderImg" cover>
+  <v-card v-if="!deleted" class="mx-auto">
+    <v-img v-if="blog.img" class="align-end text-white" height="200" :src="blog.img || placeholderImg" cover>
+      <template v-slot:placeholder>
+        <div class="d-flex align-center justify-center fill-height">
+          <v-progress-circular color="grey-lighten-4" indeterminate></v-progress-circular>
+        </div>
+      </template>
       <v-card-title>{{ blog.title }}</v-card-title>
     </v-img>
+    <div v-else class="text-white pt-4 dark">
+      <v-card-title>{{ blog.title }}</v-card-title>
+    </div>
     <v-card-subtitle v-if="blog.author" class="pt-4">
       by {{ blog.author.username }}
     </v-card-subtitle>
@@ -78,4 +84,8 @@
   </v-card>
 </template>
 
-<style scoped></style>
+<style scoped>
+  .dark {
+    background-color: #6b738c
+  }
+</style>

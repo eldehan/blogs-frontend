@@ -16,7 +16,7 @@
   if (id) {
     header = "Edit Post";
     ({ currentBlog } = storeToRefs(blogsStore))
-    blogsStore.getOneBlog(id)
+    await blogsStore.getOneBlog(id)
   }
 
   const authStore = useAuthStore()
@@ -32,9 +32,9 @@
           .matches(
             /^data:([a-z]+\/[a-z0-9-+.]+(;[a-z-]+=[a-z0-9-]+)?)?(;base64)?,([a-z0-9!$&',()*+;=\-._~:@/?%\s]*)$/i,
             'Must be a valid data URI',
-          )
-        : Yup.string().trim().url('Must be a valid URL')
-    ).label("Image URL (Optional)"),
+          ).label("Image URL (Optional)")
+        : Yup.string().trim().url('Must be a valid URL').label("Image URL (Optional)")
+    )
   });
 
   const submit = (values, { setErrors }) => {

@@ -19,7 +19,7 @@
     <v-app-bar class="px-3" color="surface" flat density="compact">
       <v-spacer></v-spacer>
       <v-tabs centered color="black">
-        <v-tab class="no-hover" to="/">Home</v-tab>
+        <v-tab class="no-hover" to="/" selected-class="">Home</v-tab>
         <v-btn v-if="authStore.user" color="black" variant="plain" rounded="0" class="align-self-center me-4"
           height="100%">
           Profile
@@ -42,7 +42,15 @@
       <v-spacer></v-spacer>
     </v-app-bar>
     <v-main>
-      <RouterView :key="$route.fullPath" />
+      <RouterView :key="$route.fullPath" v-slot="{ Component }">
+        <transition name="fade" mode="out-in">
+          <suspense>
+            <div>
+              <component :is="Component" />
+            </div>
+          </suspense>
+        </transition>
+      </RouterView>
     </v-main>
   </v-app>
 </template>
@@ -51,5 +59,15 @@
   .no-hover:hover {
     color: inherit !important;
     text-decoration: none;
+  }
+
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.25s ease;
+  }
+
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
   }
 </style>

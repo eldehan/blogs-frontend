@@ -22,13 +22,13 @@
     header = `${username}'s Posts'`;
 
     ({ filteredBlogs } = storeToRefs(blogsStore))
-    blogsStore.getBlogsByUser(username)
+    await blogsStore.getBlogsByUser(username)
   } else {
     const { user: authUser } = storeToRefs(authStore)
     username = authUser._object.user ? parseJwt(JSON.stringify(authUser)).username : "";
 
     ({ blogs } = storeToRefs(blogsStore))
-    blogsStore.getAll()
+    await blogsStore.getAll()
   }
 
   const { name } = useDisplay()
@@ -56,7 +56,10 @@
     </v-row>
     <v-row>
       <v-container v-if="filteredBlogs">
-        <v-col v-for="blog in filteredBlogs" :key="blog.id" cols="12">
+        <v-col v-if="filteredBlogs.length === 0" class="text-center" cols="12">
+          <h2 :class="`text-${headerSize} mb-2 font-weight-medium`">It doesn't look like you've made any posts...</h2>
+        </v-col>
+        <v-col v-else v-for="blog in filteredBlogs" :key="blog.id" cols="12">
           <BlogPost :blog="blog" :username="username" />
         </v-col>
       </v-container>
