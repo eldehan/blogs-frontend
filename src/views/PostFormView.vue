@@ -21,7 +21,7 @@
 
   const authStore = useAuthStore()
   const { user: authUser } = storeToRefs(authStore)
-  const authorId = parseJwt(JSON.stringify(authUser)).id
+  const author = parseJwt(JSON.stringify(authUser)).id
 
   const schema = Yup.object().shape({
     title: Yup.string().required('A title is required').label("Title"),
@@ -40,11 +40,11 @@
   const submit = (values, { setErrors }) => {
     if (id) {
       const { title, content, img } = values
-      return blogsStore.editBlog(title, content, img, id, authorId)
+      return blogsStore.editBlog(title, content, img, id, author)
         .catch(error => setErrors({ apiError: error }))
     } else {
       const { title, content, img } = values
-      return blogsStore.postBlog(title, content, img, authorId)
+      return blogsStore.postBlog(title, content, img, author)
         .catch(error => setErrors({ apiError: error }))
     }
   }

@@ -50,12 +50,12 @@ export const useBlogsStore = defineStore({
 
       try {
         if (this.blogs.length > 0) {
-          this.filteredBlogs = this.blogs.filter(blog => blog.author.id === usersStore.currentUser.id)
+          this.filteredBlogs = this.blogs.filter(blog => blog.author.id === usersStore.currentUser.id).sort((a, b) => a.updated_at < b.updated_at)
         } else {
           const response = await fetchWrapper.get(baseUrl)
           const fetchedBlogs = response.data
 
-          this.filteredBlogs = fetchedBlogs.filter(blog => blog.author.id === usersStore.currentUser.id)
+          this.filteredBlogs = fetchedBlogs.filter(blog => blog.author.id === usersStore.currentUser.id).sort((a, b) => a.updated_at < b.updated_at)
         }
       } catch (error) {
         this.blogs = { error }
